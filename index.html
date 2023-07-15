@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantificação do Material de Redes</title>
+    <link rel="stylesheet" href="resources/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <main>
+            <section class="py-5 text-center">
+                <h2>Quantificação do Material de Redes</h2>
+            </section>
+            <section class="py-5">
+                <form class="container row g-3 needs-validation" id="form">
+                    <div class="col-md-3">
+                        <label for="pavimentos" class="form-label">Número de pavimentos</label>
+                        <input type="number" class="form-control" id="pavimentos" name="pavimentos" value="4">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="pe-direito" class="form-label">Tamanho do pé-direito</label>
+                        <input type="number" class="form-control" id="pe-direito" name="pe-direito" value="5">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="pontos-telecom" class="form-label">Pontos de TELECOM por andar</label>
+                        <input type="number" class="form-control" id="pontos-telecom" name="pontos-telecom" min="1" value="24" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="distancia-malha" class="form-label">Distância média da malha horizontal</label>
+                        <input type="number" class="form-control" id="distancia-malha" name="distancia-malha" value="25">
+                    </div>
+                    <div class="col-6">
+                        <label for="caracteristicas" class="form-label">Características da fibra óptica</label>
+                        <input type="number" class="form-control" id="caracteristicas" name="caracteristicas">
+                    </div>
+                    <div class="col-6">
+                        <label for="especificacao" class="form-label">Especificação do cabo de fibra óptica</label>
+                        <input type="text" class="form-control" id="especificacao" name="especificacao">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="pares" class="form-label">Número de pares de fibras disponíveis</label>
+                        <input type="text" class="form-control" id="pares" name="pares" value="8">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="backbone" class="form-label">Quantidade de Backbone por andar</label>
+                        <input type="number" id="backbone" class="form-control" name="form-control" value="8">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="backbone-secundario" class="form-label">Possui Backbone secundário?</label>
+                        <select class="form-select" id="backbone-secundario" name="backbone-secundario">
+                            <option value="1">Sim</option>
+                            <option value="2" selected>Não</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="tipo-rack" class="form-label">Tipo do Rack</label>
+                        <select class="form-select" id="tipo-rack" name="tipo-rack">
+                            <option value="1">Aberto</option>
+                            <option value="2" selected>Fechado</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-primary" id="calcular">Calcular</button>
+                    </div>
+                </form>
+            </section>
+            <section class="py-5">
+                <table class="table table-dark table-hover hidden">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Descrição</th>
+                        <th scope="col">Unidade</th>
+                        <th scope="col">Quantidade por andar</th>
+                        <th scope="col">Quantidade total</th>
+                    </tr>
+                    <tbody class="table-group-divider">
+                        <tr id="area-trabalho">
+                            <th colspan="5" class="text-center">ÁREA DE TRABALHO</th>
+                        </tr>
+                    </tbody>
+                    <tbody class="table-group-divider">
+                        <tr id="cabeamento-horizontal">
+                            <th colspan="5" class="text-center">CABEAMENTO HORIZONTAL</th>
+                        </tr>
+                    </tbody>
+                    <tbody class="table-group-divider">
+                        <tr id="seq-set">
+                            <th colspan="5" class="text-center">ITENS COMUNS ENTRE SEQ E SET</th>
+                        </tr>
+                    </tbody>
+                    <tbody class="table-group-divider">
+                        <tr id="seq">
+                            <th colspan="5" class="text-center">SALA DE EQUIPAMENTOS (SEQ)</th>
+                        </tr>
+                    </tbody>
+                    <tbody class="table-group-divider">
+                        <tr id="set">
+                            <th colspan="5" class="text-center">SALA DE TELECOM (SET)</th>
+                        </tr>
+                    </tbody>
+                    <tbody class="table-group-divider">
+                        <tr id="backbone">
+                            <th colspan="5" class="text-center">BACKBONE ÓPTICO</th>
+                        </tr>
+                    </tbody>
+                    <tbody class="table-group-divider">
+                        <tr id="miscelanea">
+                            <th colspan="5" class="text-center">MISCELÂNEA</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="resources/js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+
+</html>
