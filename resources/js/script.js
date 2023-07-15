@@ -55,8 +55,8 @@ calcularButtonEl.on('click', (e) => {
 
     calcularAreaDeTrabalho();
     calcularCabeamentoHorizontal();
-    calcularSEQSET();
     calcularBackbone();
+    calcularSEQSET();
     calcularMiscelanea();
 });
 
@@ -105,6 +105,7 @@ function calcularSEQSET()
 
     let tamanhoReal = patchPanels + switches + organizadores + 4;
 
+    //SEQ e SET
     trEl = inserirLinha(i++, 'Patch Panel categoria 6, 24 portas, 1U (PPMH)', 'unid.', patchPanels, patchPanelsTotal, SEQSETRowEl);
     trEl = inserirLinha(i++, 'Etiqueta para identificação de portas do Patch Panel', 'unid.', patchPanels * 24, patchPanelsTotal * 24, trEl);
     trEl = inserirLinha(i++, 'Etiqueta para identificação do Patch Panel', 'unid.', patchPanels, patchPanelsTotal, trEl);
@@ -125,17 +126,17 @@ function calcularSEQSET()
         strTipoRack = 'fechado';
     }
 
-    const tamanhoRack = calcularTamanhoRack(tamanhoReal);
+    //SEQ
+    i = 1;
 
-    const porcasGaiola = Math.ceil((tamanhoRack * 4) / 10);
-    const porcasGaiolaTotal = porcasGaiola * pavimentos;
+    const tamanhoRealSEQ = tamanhoReal + 2; //Switch workgroup, + 1 organizador frontal
 
-    const reguaFechamento = tamanhoRack - tamanhoReal;
-    const reguaFechamentoTotal = reguaFechamento * pavimentos;
+    trEl = inserirLinha(i++, 'Switch backbone', 'unid.', 1, 1, SEQRowEl);
 
-    trEl = inserirLinha(i++, `Rack ${strTipoRack}, largura de 19", tamanho de ${tamanhoRack}U`, 'unid.', 1, pavimentos, trEl);
-    trEl = inserirLinha(i++, 'Régua de fechamento', 'unid.', reguaFechamento, reguaFechamentoTotal, trEl);
-    trEl = inserirLinha(i++, 'Parafuso porca gaiola (conjunto de 10 unidade)', 'conjunto', porcasGaiola, porcasGaiolaTotal, trEl);
+    calcularRack(i, tamanhoRealSEQ, trEl, 'SEQ', strTipoRack);
+
+    //SET
+    calcularRack(1, tamanhoReal, SETRowEl, 'SET', strTipoRack);
 }
 
 function calcularBackbone()
@@ -143,6 +144,54 @@ function calcularBackbone()
     let i = 1;
     let trEl;
 
+    const caracteristicaFibra = parseInt($('#caracteristicas').val());
+
+    console.log(caracteristicaFibra);
+
+    const fibrasPorCabo = inputs['qtd-backbone'].val();
+
+    const fibrasDisponiveis = inputs['disponivel'].val();
+
+    const peDireito = inputs['pe-direito'].val();
+
+    let tamanhoCaboFO = 0;
+
+    for(let j = 1; j <= 3; j++) 
+    {
+        tamanhoCaboFO += peDireito * (j + 2);
+    }
+
+    const fibrasTotal = fibrasPorCabo * (pavimentos - 1);
+
+    const quantidadeDio = Math.ceil(fibrasTotal / 24) + 1;
+
+    const especificacaoCabo = $('especificacao').val() === 1 ? 'simples' : 'duplo';
+
+    const tipoFibra = caracteristicaFibra === 1 ? '50 x 125µm - MM':  '9 x 125µm - SM';
+
+    const acopladorBBInterno = especificacaoCabo === 1 ? fibrasDisponiveis : fibrasDisponiveis / 2;
+    const acopladorBBInternoTotal = acopladorBBInterno * (pavimentos - 1);
+
+    const acopladorBBExterno = fibrasPorCabo / 2;
+
+    const bandeja = Math.ceil(fibrasTotal / 12) + 1;
+
+    const terminadores = (pavimentos - 1);
+
+    const cordaoOptico = especificacaoCabo === 'simples' ? fibrasPorCabo * 4 : (fibrasPorCabo * 4) / 2;
+
+    trEl = inserirLinha(i++, `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra === 1 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${fibrasPorCabo} fibras`, 
+                        'metros', tamanhoCaboFO, tamanhoCaboFO, backboneRowEl);
+    trEl = inserirLinha(i++, 'Chassi DIO (Distribuido Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDio, quantidadeDio, trEl);
+    trEl = inserirLinha(i++, `Acoplador óptico ${tipoFibra} - LC - ${especificacaoCabo}`, 'unid', acopladorBBInterno, acopladorBBInternoTotal, trEl);
+    trEl = inserirLinha(i++, 'Acoplador óptico 9 x 125µm - SM - LC - duplo', 'unid', acopladorBBExterno, acopladorBBExterno, trEl);
+    trEl = inserirLinha(i++, 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja, bandeja, trEl);
+    trEl = inserirLinha(i++, `Terminador Óptico para ${fibrasPorCabo} fibras`, 'unid', 1, terminadores, trEl);
+    trEl = inserirLinha(i++, `Pig tail ${tipoFibra} - 1,5m - simples - conector LC`, 'unid', fibrasTotal, fibrasTotal, trEl);
+    trEl = inserirLinha(i++, `Pig tail ${tipoFibra} - 3,0m - ${especificacaoCabo} - conector LC`, 'unid', acopladorBBInterno, acopladorBBInternoTotal, trEl);
+    trEl = inserirLinha(i++, `Cordão Óptico ${tipoFibra} - 3m - ${especificacaoCabo} - conector LC`, 'unid', cordaoOptico, cordaoOptico, trEl);
+    trEl = inserirLinha(i++, 'Pig tail 50 x 125µm - SM - 1,5m - simples - conector LC', 'unid', fibrasPorCabo, fibrasPorCabo, trEl);
+    trEl = inserirLinha(i++, `Cordão Óptico 9 x 125µm - SM - 3m - duplo - conector LC`, 'unid', fibrasPorCabo / 2, fibrasPorCabo / 2, trEl);
 }
 
 function calcularMiscelanea() 
@@ -187,4 +236,21 @@ function calcularTamanhoRack(tamanhoReal)
     })
 
     return tamanhoRack;
+}
+
+function calcularRack(i, tamanhoReal, targetRow, tipoSala, strTipoRack) 
+{
+    let trEl;
+
+    const tamanhoRack = calcularTamanhoRack(tamanhoReal);
+
+    const porcasGaiola = Math.ceil((tamanhoRack * 4) / 10);
+    const porcasGaiolaTotal = tipoSala === 'SEQ' ? porcasGaiola : porcasGaiola * (pavimentos - 1);
+
+    const reguaFechamento = tamanhoRack - tamanhoReal;
+    const reguaFechamentoTotal = tipoSala === 'SEQ' ? reguaFechamento : reguaFechamento * (pavimentos - 1);
+
+    trEl = inserirLinha(i++, `Rack ${strTipoRack}, largura de 19", tamanho de ${tamanhoRack}U`, 'unid.', 1, tipoSala === 'SEQ' ? 1 : (pavimentos - 1), targetRow);
+    trEl = inserirLinha(i++, 'Régua de fechamento', 'unid.', reguaFechamento, reguaFechamentoTotal, trEl);
+    trEl = inserirLinha(i++, 'Parafuso porca gaiola (conjunto de 10 unidade)', 'conjunto', porcasGaiola, porcasGaiolaTotal, trEl);
 }

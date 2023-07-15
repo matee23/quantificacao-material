@@ -20,11 +20,11 @@
                 <form class="container row g-3 needs-validation" id="form">
                     <div class="col-md-3">
                         <label for="pavimentos" class="form-label">Número de pavimentos</label>
-                        <input type="number" class="form-control" id="pavimentos" name="pavimentos" value="4">
+                        <input type="number" class="form-control" id="pavimentos" name="pavimentos" value="4" required>
                     </div>
                     <div class="col-md-3">
                         <label for="pe-direito" class="form-label">Tamanho do pé-direito</label>
-                        <input type="number" class="form-control" id="pe-direito" name="pe-direito" value="5">
+                        <input type="number" class="form-control" id="pe-direito" name="pe-direito" value="5" required>
                     </div>
                     <div class="col-md-3">
                         <label for="pontos-telecom" class="form-label">Pontos de TELECOM por andar</label>
@@ -32,23 +32,29 @@
                     </div>
                     <div class="col-md-3">
                         <label for="distancia-malha" class="form-label">Distância média da malha horizontal</label>
-                        <input type="number" class="form-control" id="distancia-malha" name="distancia-malha" value="25">
+                        <input type="number" class="form-control" id="distancia-malha" name="distancia-malha" value="25" required>
                     </div>
                     <div class="col-6">
                         <label for="caracteristicas" class="form-label">Características da fibra óptica</label>
-                        <input type="number" class="form-control" id="caracteristicas" name="caracteristicas">
+                        <select class="form-select" id="caracteristicas" name="caracteristicas">
+                            <option value="1" selected>Fibra Óptica Multimodo (FOMMIG) 50 x 125µm</option>
+                            <option value="2">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm</option>
+                        </select>
                     </div>
                     <div class="col-6">
                         <label for="especificacao" class="form-label">Especificação do cabo de fibra óptica</label>
-                        <input type="text" class="form-control" id="especificacao" name="especificacao">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="pares" class="form-label">Número de pares de fibras disponíveis</label>
-                        <input type="text" class="form-control" id="pares" name="pares" value="8">
+                        <select class="form-select" id="especificacao" name="especificacao">
+                            <option value="1">Simples</option>
+                            <option value="2" selected>Duplo</option>
+                        <select/>
                     </div>
                     <div class="col-md-3">
                         <label for="backbone" class="form-label">Quantidade de Backbone por andar</label>
-                        <input type="number" id="backbone" class="form-control" name="form-control" value="8">
+                        <input type="number" id="qtd-backbone" class="form-control" name="qtd-backbone" value="8" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="disponivel" class="form-label">Número de fibras disponíveis</label>
+                        <input type="text" class="form-control" id="disponivel" name="disponivel" value="8" required>
                     </div>
                     <div class="col-md-3">
                         <label for="backbone-secundario" class="form-label">Possui Backbone secundário?</label>
