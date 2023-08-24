@@ -1,15 +1,26 @@
 const formEl = $('#form');
 
-formEl.submit((e) => {e.preventDefault();});
+formEl.submit((e) => { e.preventDefault(); });
 
-const inputs = {};
+const options = {};
 
-formEl.find('input').not(':submit').toArray().forEach((el) => {
-    let input = $(el);
+formEl.find('input').not(':submit').not(':radio').each(function ()
+{
+    let input = $(this);
     let inputName = input.attr('name');
 
-    inputs[inputName] = input;
+    options[inputName] = input;
 });
+
+formEl.find('select').toArray().forEach((el) =>
+{
+    let select = $(el);
+    let selectName = select.attr('name');
+
+    options[selectName] = select;
+});
+
+console.log(options)
 
 const calcularButtonEl = $('#calcular');
 
@@ -17,31 +28,80 @@ const tableEl = $('.table');
 
 const backboneRowEl = $('#backbone');
 
-calcularButtonEl.on('click', (e) => {
+let equipamentos = [];
+
+const possuiSecundarioInputs = $('input[name="possui-secundario"]');
+
+const containerBackboneSecundarioEl = $('#container-backbone-secundario');
+
+let possuiSecundario = !!parseInt($('input[name="possui-secundario"]:checked').val());
+
+possuiSecundarioInputs.each(function ()
+{
+    $(this).on('click', (e) =>
+    {
+        possuiSecundario = !!parseInt($(this).val());
+
+        possuiSecundario === true ? containerBackboneSecundarioEl.removeClass('hidden') : containerBackboneSecundarioEl.addClass('hidden');
+    })
+});
+
+calcularButtonEl.on('click', (e) =>
+{
     $('.inserted').remove();
 
     tableEl.removeClass('hidden');
 
-    calcularBackbone();
+    calcularBackbonePrimario();
+
+    calcularBackboneSecundario();
+
+    inserirLinhas();
+
+    equipamentos = [];
 });
 
-function calcularBackbone()
+function calcularBackbonePrimario()
 {
-    //Numeração dos itens na tabela
-    let i = 1;
+    const caracteristicaFibra = parseInt(options['caracteristicas-primario'].val());
 
-    //Faz referência ao último item inserido 
-    let trEl;
+    const quantidadeBackbone = parseInt(options['backbone-primario'].val());
 
-    const pavimentos = parseInt(inputs['pavimentos'].val());
+    const pares = parseInt(options['disponivel-primario'].val());
 
-    const caracteristicaFibra = parseInt($('#caracteristicas').val());
+    //DIO
+    const quantidadeDIO = Math.ceil((pares / 2) / 24) * 2; //Multiplicando por 2 por se tratar de duas salas de equipamentos diferentes
 
-    const quantidadeBackbone = parseInt(inputs['qtd-backbone'].val());
+    atualizarEquipamentos('dio', 'Chassi DIO (Distribuidor Interno Óptico) com 24 portas - 1U - 19"', 'unid.', quantidadeDIO);
 
-    const paresPorCabo = parseInt(inputs['disponivel'].val());
+    //Acoplador
+    const acoplador = pares * 2;
 
-    const peDireito = parseInt(inputs['pe-direito'].val());
+    atualizarEquipamentos('acoplador 9 x 125µm - SM', 'Acoplador óptico 9 x 125µm - SM - LC - duplo', 'unid.', acoplador);
+
+    //Pig tail
+
+    const pigTail = pares * 2 * 2;
+
+    atualizarEquipamentos('pig tail simples 9 x 125µm - SM', 'Pig tail 9 x 125µm - SM - 1,5m - simples - conector LC', 'unid', pigTail);
+}
+
+function calcularBackboneSecundario()
+{
+    if (!possuiSecundario)
+        return;
+
+    const pavimentos = parseInt(options['pavimentos'].val());
+
+    const caracteristicaFibra = parseInt(options['caracteristicas-secundario'].val());
+
+    const quantidadeBackbone = parseInt(options['backbone-secundario'].val());
+
+    const paresPorCabo = parseInt(options['disponivel-secundario'].val());
+
+    const peDireito = parseInt(options['pe-direito'].val());
+
+    const especificacao = caracteristicaFibra === 1 ? '50 x 125µm - MM' : '9 x 125µm - SM';
 
     const paresPorAndar = paresPorCabo * quantidadeBackbone;
     const paresTotal = paresPorAndar * (pavimentos - 1);
@@ -49,86 +109,90 @@ function calcularBackbone()
     const fibrasPorAndar = paresPorAndar * 2;
     const fibrasTotal = paresTotal * 2;
 
-    const tamanhoCabo = calcularCaboFO(pavimentos, peDireito);
-
-    const quantidadeDio = Math.ceil((paresTotal / 2) / 24);
-
-    const tipoFibra = caracteristicaFibra === 1 ? '50 x 125µm - MM':  '9 x 125µm - SM';
-
-    const acoplador = paresPorAndar * (pavimentos - 1);
-
-    const bandeja = Math.ceil(fibrasTotal / 12);
-
-    const tamanhoTerminador = fibrasPorAndar <= 8 ? fibrasPorAndar : 8;
-    const terminadoresTotal = Math.ceil((fibrasPorAndar) / tamanhoTerminador) * (pavimentos - 1);
-
-    const pigTailInterno = fibrasTotal;
-
-    const pigTail = paresTotal;
-
-    const cordaoOptico = paresPorCabo;
-
-    const cordaoOpticoTotal = cordaoOptico * (pavimentos - 1);
-
-    trEl = inserirLinha(i++, `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra === 1 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${paresPorCabo} fibras`, 'metros', tamanhoCabo, backboneRowEl);
-    trEl = inserirLinha(i++, 'Chassi DIO (Distribuido Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDio, trEl);
-    trEl = inserirLinha(i++, `Acoplador óptico ${tipoFibra} - LC - duplo`, 'unid', acoplador, trEl);
-    trEl = inserirLinha(i++, 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja, trEl);
-    trEl = inserirLinha(i++, `Terminador Óptico - ${tamanhoTerminador}`, 'unid', terminadoresTotal, trEl);
-    trEl = inserirLinha(i++, `Pig tail ${tipoFibra} - 1,5m - simples - conector LC`, 'unid', pigTailInterno, trEl);
-    trEl = inserirLinha(i++, `Pig tail ${tipoFibra} - 3,0m - duplo - conector LC`, 'unid', pigTail, trEl);
-    trEl = inserirLinha(i++, `Cordão Óptico ${tipoFibra} - 3m - duplo - conector LC`, 'unid', cordaoOpticoTotal, trEl);
-}
-
-function calcularCaboFO(pavimentos, peDireito) {
+    //Cabo
     let tamanhoCabo = 0;
 
-    for(let j = 1; j <= pavimentos - 1; j++) 
+    for (let j = 1; j <= pavimentos - 1; j++) 
     {
         tamanhoCabo += peDireito * (j + 2);
     }
 
     tamanhoCabo = Math.ceil(tamanhoCabo * 1.2);
 
-    return tamanhoCabo;
+    atualizarEquipamentos('cabo', `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra === 1 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${paresPorCabo} fibras`, 'metros', tamanhoCabo);
+
+    //DIO
+    const quantidadeDio = Math.ceil((paresTotal / 2) / 24);
+
+    atualizarEquipamentos('dio', 'Chassi DIO (Distribuido Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDio);
+
+    //Acoplador
+    const acoplador = paresPorAndar * (pavimentos - 1);
+
+    atualizarEquipamentos(`acoplador ${especificacao}`, `Acoplador óptico ${especificacao} - LC - duplo`, 'unid', acoplador);
+
+    //Bandeja
+    const bandeja = Math.ceil(fibrasTotal / 12);
+
+    atualizarEquipamentos('bandeija', 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja);
+
+    //Terminador
+    const tamanhoTerminador = fibrasPorAndar <= 8 ? fibrasPorAndar : 8;
+    const terminadoresTotal = Math.ceil((fibrasPorAndar) / tamanhoTerminador) * (pavimentos - 1);
+
+    atualizarEquipamentos('terminador', `Terminador Óptico - ${tamanhoTerminador}`, 'unid', terminadoresTotal);
+
+    //Pig tail interno
+    const pigTailInterno = fibrasTotal;
+
+    atualizarEquipamentos(`pig tail simples ${especificacao}`, `Pig tail ${especificacao} - 1,5m - simples - conector LC`, 'unid', pigTailInterno);
+
+    //Pig tail externo
+    const pigTailExterno = paresTotal;
+
+    atualizarEquipamentos(`pig tail duplo ${especificacao}`, `Pig tail ${especificacao} - 3,0m - duplo - conector LC`, 'unid', pigTailExterno);
+
+    //Cordão óptico
+    const cordaoOptico = paresPorCabo;
+
+    const cordaoOpticoTotal = cordaoOptico * (pavimentos - 1);
+
+    atualizarEquipamentos('cordao', `Cordão Óptico ${especificacao} - 3m - duplo - conector LC`, 'unid', cordaoOpticoTotal);
 }
 
-function calcularDIO() {
-
-}
-
-function calcularAcoplador() {
-
-}
-
-function calcularBandeja() {
-    
-}
-
-function calcularTerminador() {
-
-}
-
-function calcularPigTailInterno() {
-
-}
-
-function calcularPigTail() {
-
-}
-
-function inserirLinha(numero, descricao, unidade, quantidadeTotal, linhaReferencia) 
+function atualizarEquipamentos(chave, descricao, unidade, quantidade)
 {
-    let trEl = $('<tr>');
+    if (equipamentos[chave] === undefined)
+    {
+        equipamentos[chave] = {
+            descricao: descricao,
+            unidade: unidade,
+            quantidade: quantidade
+        };
 
-    trEl.append($('<td>').text(numero));
-    trEl.append($('<td>').text(descricao));
-    trEl.append($('<td>').text(unidade));
-    trEl.append($('<td>').text(quantidadeTotal));
+        return;
+    }
 
-    trEl.attr('class', 'inserted');
+    equipamentos[chave].quantidade += quantidade;
+}
 
-    tableEl.find(linhaReferencia).after(trEl);
+function inserirLinhas() 
+{
+    for (const key in equipamentos) 
+    {
+        let equipamento = equipamentos[key];
 
-    return trEl;
+        let elements = $('.inserted');
+
+        let trEl = $('<tr>');
+
+        trEl.append($('<td>').text(elements.length + 1));
+        trEl.append($('<td>').text(equipamento.descricao));
+        trEl.append($('<td>').text(equipamento.unidade));
+        trEl.append($('<td>').text(equipamento.quantidade));
+
+        trEl.attr('class', 'inserted');
+
+        tableEl.find(elements.last().length === 0 ? backboneRowEl : elements.last()).after(trEl);
+    }
 }

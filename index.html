@@ -12,43 +12,79 @@
 
 <body>
     <div class="container">
-        <main>
+        <header>
             <section class="py-5 text-center">
                 <h2>Quantificação do Material de Redes</h2>
             </section>
+        </header>
+        <main>
             <section class="py-5">
                 <form class="container row g-3 needs-validation" id="form">
-                    <div class="col-md-3">
-                        <label for="pavimentos" class="form-label">Número de pavimentos</label>
-                        <input type="number" class="form-control" id="pavimentos" name="pavimentos" value="4" required>
+                    <div class="conatine row g-3" id="container-backbone-primario">
+                        <h1>Backbone primário</h1>
+                        <div class="col-md-4">
+                            <label for="caracteristicas-primario">Características da fibra óptica</label>
+                            <select class="form-select" id="caracteristicas-primario" name="caracteristicas-primario">
+                                <option value="1" selected>Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1310nm</option>
+                                <option value="2">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1550nm</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="backbone-primario">Quantidade de Backbone</label>
+                            <input type="number" class="form-control" id="backbone-primario" name="backbone-primario"
+                                value="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="disponivel-primario">Número de pares de fibra disponíveis</label>
+                            <input type="number" class="form-control" id="disponivel-primario"
+                                name="disponivel-primario" value="4" required>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label for="pe-direito" class="form-label">Tamanho do pé-direito</label>
-                        <input type="number" class="form-control" id="pe-direito" name="pe-direito" value="5" required>
+                    <div class="col-md-4">
+                        <p>Possui backbone secundário?</p>
+                        <div>
+                            <input type="radio" id="possui-secundario-sim" name="possui-secundario" value="1" checked>
+                            <label for="possui-secundario-sim">Sim</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="possui-secundario-nao" name="possui-secundario" value="0">
+                            <label for="possui-secundario-nao">Não</label>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <label for="caracteristicas" class="form-label">Características da fibra óptica</label>
-                        <select class="form-select" id="caracteristicas" name="caracteristicas">
-                            <option value="1" selected>Fibra Óptica Multimodo (FOMMIG) 50 x 125µm</option>
-                            <option value="2">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm</option>
-                        </select>
+                    <div class="container row g-3" id="container-backbone-secundario">
+                        <h1>Backbone secundário</h1>
+                        <div class="col-md-4">
+                            <label for="pavimentos" class="form-label">Número de pavimentos</label>
+                            <input type="number" class="form-control" id="pavimentos" name="pavimentos" value="4"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pe-direito" class="form-label">Tamanho do pé-direito</label>
+                            <input type="number" class="form-control" id="pe-direito" name="pe-direito" value="5"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="caracteristicas-secundario" class="form-label">Características da fibra
+                                óptica</label>
+                            <select class="form-select" id="caracteristicas-secundario"
+                                name="caracteristicas-secundario">
+                                <option value="1" selected>Fibra Óptica Multimodo (FOMMIG) 50 x 125µm</option>
+                                <option value="2">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="backbone-secundario" class="form-label">Quantidade de Backbone por andar</label>
+                            <input type="number" id="backbone-secundario" class="form-control"
+                                name="backbone-secundario" value="1" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="disponivel-secundario" class="form-label">Número de pares de fibra
+                                disponíveis</label>
+                            <input type="text" class="form-control" id="disponivel-secundario"
+                                name="disponivel-secundario" value="4" required>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <label for="backbone" class="form-label">Quantidade de Backbone por andar</label>
-                        <input type="number" id="qtd-backbone" class="form-control" name="qtd-backbone" value="1" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="disponivel" class="form-label">Número de pares de fibra disponíveis</label>
-                        <input type="text" class="form-control" id="disponivel" name="disponivel" value="4" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="backbone-secundario" class="form-label">Possui Backbone secundário?</label>
-                        <select class="form-select" id="backbone-secundario" name="backbone-secundario">
-                            <option value="1">Sim</option>
-                            <option value="2" selected>Não</option>
-                        </select>
-                    </div>
-                    <div class="col-3">
+                    <div class="col-12">
                         <button type="submit" class="btn btn-primary" id="calcular">Calcular</button>
                     </div>
                 </form>
@@ -61,45 +97,11 @@
                         <th scope="col">Unidade</th>
                         <th scope="col">Quantidade</th>
                     </tr>
-                    <!--
-                    <tbody class="table-group-divider">
-                        <tr id="area-trabalho">
-                            <th colspan="5" class="text-center">ÁREA DE TRABALHO</th>
-                        </tr>
-                    </tbody>
-                    <tbody class="table-group-divider">
-                        <tr id="cabeamento-horizontal">
-                            <th colspan="5" class="text-center">CABEAMENTO HORIZONTAL</th>
-                        </tr>
-                    </tbody>
-                    <tbody class="table-group-divider">
-                        <tr id="seq-set">
-                            <th colspan="5" class="text-center">ITENS COMUNS ENTRE SEQ E SET</th>
-                        </tr>
-                    </tbody>
-                    <tbody class="table-group-divider">
-                        <tr id="seq">
-                            <th colspan="5" class="text-center">SALA DE EQUIPAMENTOS (SEQ)</th>
-                        </tr>
-                    </tbody>
-                    <tbody class="table-group-divider">
-                        <tr id="set">
-                            <th colspan="5" class="text-center">SALA DE TELECOM (SET)</th>
-                        </tr>
-                    </tbody>
-                    -->
                     <tbody class="table-group-divider">
                         <tr id="backbone">
                             <th colspan="5" class="text-center">BACKBONE ÓPTICO</th>
                         </tr>
                     </tbody>
-                    <!--
-                    <tbody class="table-group-divider">
-                        <tr id="miscelanea">
-                            <th colspan="5" class="text-center">MISCELÂNEA</th>
-                        </tr>
-                    </tbody>
-                    -->
                 </table>
             </section>
         </main>
@@ -111,7 +113,9 @@
 
     <script type="module" src="resources/js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
