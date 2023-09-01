@@ -23,6 +23,10 @@
                     <div class="conatine row g-3" id="container-backbone-primario">
                         <h1>Backbone primário</h1>
                         <div class="col-md-4">
+                            <label for="distancia">Distância entre as salas (em metros)</label>
+                            <input type="number" class="form-control" id="distancia" name="distancia" value="1000" required>
+                        </div>
+                        <div class="col-md-4">
                             <label for="caracteristicas-primario">Características da fibra óptica</label>
                             <select class="form-select" id="caracteristicas-primario" name="caracteristicas-primario">
                                 <option value="1" selected>Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1310nm</option>
@@ -41,17 +45,21 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <p>Possui backbone secundário?</p>
-                        <div>
-                            <input type="radio" id="possui-secundario-sim" name="possui-secundario" value="1" checked>
+                        
+                        <div class="form-check form-switch">
+                            <label for="possui-secundario">Possui backbone secundário?</label>
+                            <input type="checkbox" class="form-check-input" id="possui-secundario">
+                        </div>
+                        <!--<div>
+                            <input type="radio" id="possui-secundario-sim" name="possui-secundario" value="1">
                             <label for="possui-secundario-sim">Sim</label>
                         </div>
                         <div>
-                            <input type="radio" id="possui-secundario-nao" name="possui-secundario" value="0">
+                            <input type="radio" id="possui-secundario-nao" name="possui-secundario" value="0" checked>
                             <label for="possui-secundario-nao">Não</label>
-                        </div>
+                        </div>-->
                     </div>
-                    <div class="container row g-3" id="container-backbone-secundario">
+                    <div class="container row g-3 hidden" id="container-backbone-secundario">
                         <h1>Backbone secundário</h1>
                         <div class="col-md-4">
                             <label for="pavimentos" class="form-label">Número de pavimentos</label>

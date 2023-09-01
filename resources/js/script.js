@@ -30,20 +30,17 @@ const backboneRowEl = $('#backbone');
 
 let equipamentos = [];
 
-const possuiSecundarioInputs = $('input[name="possui-secundario"]');
+const possuiSecundarioInput = $('#possui-secundario');
 
 const containerBackboneSecundarioEl = $('#container-backbone-secundario');
 
 let possuiSecundario = !!parseInt($('input[name="possui-secundario"]:checked').val());
 
-possuiSecundarioInputs.each(function ()
+possuiSecundarioInput.on('click', (e) =>
 {
-    $(this).on('click', (e) =>
-    {
-        possuiSecundario = !!parseInt($(this).val());
+    containerBackboneSecundarioEl.toggle('hidden')   
 
-        possuiSecundario === true ? containerBackboneSecundarioEl.removeClass('hidden') : containerBackboneSecundarioEl.addClass('hidden');
-    })
+    possuiSecundario === true ? containerBackboneSecundarioEl.removeClass('hidden') : containerBackboneSecundarioEl.addClass('hidden');
 });
 
 calcularButtonEl.on('click', (e) =>
@@ -61,29 +58,53 @@ calcularButtonEl.on('click', (e) =>
     equipamentos = [];
 });
 
+
+//Bandeja, cordão
 function calcularBackbonePrimario()
 {
+    const distancia = parseInt(options['distancia'].val());
+
     const caracteristicaFibra = parseInt(options['caracteristicas-primario'].val());
 
     const quantidadeBackbone = parseInt(options['backbone-primario'].val());
 
     const pares = parseInt(options['disponivel-primario'].val());
 
-    //DIO
-    const quantidadeDIO = Math.ceil((pares / 2) / 24) * 2; //Multiplicando por 2 por se tratar de duas salas de equipamentos diferentes
+    const paresTotal = pares * quantidadeBackbone;
 
-    atualizarEquipamentos('dio', 'Chassi DIO (Distribuidor Interno Óptico) com 24 portas - 1U - 19"', 'unid.', quantidadeDIO);
+    //Cabo
+
+    const tamanhoCabo = (Math.ceil(distancia * 1.2)) * quantidadeBackbone;
+
+    atualizarEquipamentos('cabo primario', `Cabo de Fibra Óptica Loose (FOSMIG) 9 x 125µm ${caracteristicaFibra === 1 ? '1310nm' : '1550nm'}`, 'metros', tamanhoCabo);
+
+    //DIO
+    const quantidadeDIO = Math.ceil((paresTotal) / 24) * 2; //Multiplicando por 2 por se tratar de duas salas de equipamentos diferentes
+
+    atualizarEquipamentos('dio', 'Chassi DIO (Distribuidor Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDIO);
+
+    //Bandeja
+
+    const bandeja = Math.ceil((paresTotal * 2) / 12) * 2;
+
+    atualizarEquipamentos('bandeja', 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja);
 
     //Acoplador
-    const acoplador = pares * 2;
+    const acoplador = paresTotal * 2;
 
-    atualizarEquipamentos('acoplador 9 x 125µm - SM', 'Acoplador óptico 9 x 125µm - SM - LC - duplo', 'unid.', acoplador);
+    atualizarEquipamentos('acoplador 9 x 125µm - SM', 'Acoplador óptico 9 x 125µm - SM - LC - duplo', 'unid', acoplador);
 
     //Pig tail
 
-    const pigTail = pares * 2 * 2;
+    const pigTail = paresTotal * 2 * 2;
 
     atualizarEquipamentos('pig tail simples 9 x 125µm - SM', 'Pig tail 9 x 125µm - SM - 1,5m - simples - conector LC', 'unid', pigTail);
+
+    //Cordão
+
+    const cordaoOptico = paresTotal * 2;
+
+    atualizarEquipamentos('cordao 9 x 125µm - SM', 'Cordão Óptico 9 x 125µm - SM - 3m - duplo - conector LC', 'unid', cordaoOptico);
 }
 
 function calcularBackboneSecundario()
@@ -119,10 +140,10 @@ function calcularBackboneSecundario()
 
     tamanhoCabo = Math.ceil(tamanhoCabo * 1.2);
 
-    atualizarEquipamentos('cabo', `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra === 1 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${paresPorCabo} fibras`, 'metros', tamanhoCabo);
+    atualizarEquipamentos('cabo secundario', `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra === 1 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${paresPorCabo} fibras`, 'metros', tamanhoCabo);
 
     //DIO
-    const quantidadeDio = Math.ceil((paresTotal / 2) / 24);
+    const quantidadeDio = Math.ceil((paresTotal) / 24);
 
     atualizarEquipamentos('dio', 'Chassi DIO (Distribuido Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDio);
 
@@ -134,7 +155,7 @@ function calcularBackboneSecundario()
     //Bandeja
     const bandeja = Math.ceil(fibrasTotal / 12);
 
-    atualizarEquipamentos('bandeija', 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja);
+    atualizarEquipamentos('bandeja', 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja);
 
     //Terminador
     const tamanhoTerminador = fibrasPorAndar <= 8 ? fibrasPorAndar : 8;
@@ -157,7 +178,7 @@ function calcularBackboneSecundario()
 
     const cordaoOpticoTotal = cordaoOptico * (pavimentos - 1);
 
-    atualizarEquipamentos('cordao', `Cordão Óptico ${especificacao} - 3m - duplo - conector LC`, 'unid', cordaoOpticoTotal);
+    atualizarEquipamentos(`cordao ${especificacao}`, `Cordão Óptico ${especificacao} - 3m - duplo - conector LC`, 'unid', cordaoOpticoTotal);
 }
 
 function atualizarEquipamentos(chave, descricao, unidade, quantidade)
