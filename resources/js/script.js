@@ -30,17 +30,33 @@ const backboneRowEl = $('#backbone');
 
 let equipamentos = [];
 
-const possuiSecundarioInput = $('#possui-secundario');
+const possuiPrimarioInputs = $('input[name="possui-primario"]');
+const possuiSecundarioInputs = $('input[name="possui-secundario"]');
 
+const containerBackbonePrimarioEl = $('#container-backbone-primario');
 const containerBackboneSecundarioEl = $('#container-backbone-secundario');
 
+let possuiPrimario = !!parseInt($('input[name="possui-primario"]:checked').val());
 let possuiSecundario = !!parseInt($('input[name="possui-secundario"]:checked').val());
 
-possuiSecundarioInput.on('click', (e) =>
+possuiPrimarioInputs.each(function ()
 {
-    containerBackboneSecundarioEl.toggle('hidden')   
+    $(this).on('click', (e) =>
+    {
+        possuiPrimario = !!parseInt($(this).val());
 
-    possuiSecundario === true ? containerBackboneSecundarioEl.removeClass('hidden') : containerBackboneSecundarioEl.addClass('hidden');
+        possuiPrimario === true ? containerBackbonePrimarioEl.removeClass('hidden') : containerBackbonePrimarioEl.addClass('hidden');
+    })
+});
+
+possuiSecundarioInputs.each(function ()
+{
+    $(this).on('click', (e) =>
+    {
+        possuiSecundario = !!parseInt($(this).val());
+
+        possuiSecundario === true ? containerBackboneSecundarioEl.removeClass('hidden') : containerBackboneSecundarioEl.addClass('hidden');
+    })
 });
 
 calcularButtonEl.on('click', (e) =>
@@ -49,69 +65,68 @@ calcularButtonEl.on('click', (e) =>
 
     tableEl.removeClass('hidden');
 
-    calcularBackbonePrimario();
+    if (possuiPrimario)
+        calcularBackbonePrimario();
 
-    calcularBackboneSecundario();
+    if (possuiSecundario)
+        calcularBackboneSecundario();
 
     inserirLinhas();
 
     equipamentos = [];
 });
 
-
-//Bandeja, cordão
 function calcularBackbonePrimario()
 {
-    const distancia = parseInt(options['distancia'].val());
-
     const caracteristicaFibra = parseInt(options['caracteristicas-primario'].val());
 
     const quantidadeBackbone = parseInt(options['backbone-primario'].val());
 
     const pares = parseInt(options['disponivel-primario'].val());
 
+    const distancia = parseInt(options['distancia'].val());
+
     const paresTotal = pares * quantidadeBackbone;
+
+    const especificacao = caracteristicaFibra < 3 ? '50 x 125µm - MM' : '9 x 125µm - SM';
 
     //Cabo
 
-    const tamanhoCabo = (Math.ceil(distancia * 1.2)) * quantidadeBackbone;
+    const tamanhoTotal = (distancia * 1.2) * quantidadeBackbone;
 
-    atualizarEquipamentos('cabo primario', `Cabo de Fibra Óptica Loose (FOSMIG) 9 x 125µm ${caracteristicaFibra === 1 ? '1310nm' : '1550nm'}`, 'metros', tamanhoCabo);
+    atualizarEquipamentos('cabo-primario', `Cabo de Fibra Óptica Loose ${caracteristicaFibra < 3 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${pares} fibras`, 'metros', tamanhoTotal);
 
     //DIO
-    const quantidadeDIO = Math.ceil((paresTotal) / 24) * 2; //Multiplicando por 2 por se tratar de duas salas de equipamentos diferentes
+    const quantidadeDIO = Math.ceil((paresTotal / 2) / 24) * 2; //Multiplicando por 2 por se tratar de duas salas de equipamentos diferentes
 
-    atualizarEquipamentos('dio', 'Chassi DIO (Distribuidor Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDIO);
+    atualizarEquipamentos('dio', 'Chassi DIO (Distribuidor Interno Óptico) com 24 portas - 1U - 19"', 'unid.', quantidadeDIO);
 
     //Bandeja
 
     const bandeja = Math.ceil((paresTotal * 2) / 12) * 2;
 
-    atualizarEquipamentos('bandeja', 'Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)', 'unid', bandeja);
+    atualizarEquipamentos('bandeja', "Bandeja para emenda de fibra no DIO - (comporta até 12 emendas)", 'unid.', bandeja);
 
     //Acoplador
     const acoplador = paresTotal * 2;
 
-    atualizarEquipamentos('acoplador 9 x 125µm - SM', 'Acoplador óptico 9 x 125µm - SM - LC - duplo', 'unid', acoplador);
+    atualizarEquipamentos(`acoplador ${especificacao}`, `Acoplador óptico ${especificacao} - LC - duplo`, 'unid.', acoplador);
 
     //Pig tail
 
     const pigTail = paresTotal * 2 * 2;
 
-    atualizarEquipamentos('pig tail simples 9 x 125µm - SM', 'Pig tail 9 x 125µm - SM - 1,5m - simples - conector LC', 'unid', pigTail);
+    atualizarEquipamentos(`pig tail simples ${especificacao}`, `Pig tail ${especificacao} - 1,5m - simples - conector LC`, 'unid', pigTail);
 
-    //Cordão
+    //Cordão óptico
 
     const cordaoOptico = paresTotal * 2;
 
-    atualizarEquipamentos('cordao 9 x 125µm - SM', 'Cordão Óptico 9 x 125µm - SM - 3m - duplo - conector LC', 'unid', cordaoOptico);
+    atualizarEquipamentos(`cordao ${especificacao}`, `Cordão Óptico ${especificacao} - 3m - Duplo - conector LC`, 'unid.', cordaoOptico);
 }
 
 function calcularBackboneSecundario()
 {
-    if (!possuiSecundario)
-        return;
-
     const pavimentos = parseInt(options['pavimentos'].val());
 
     const caracteristicaFibra = parseInt(options['caracteristicas-secundario'].val());
@@ -122,7 +137,7 @@ function calcularBackboneSecundario()
 
     const peDireito = parseInt(options['pe-direito'].val());
 
-    const especificacao = caracteristicaFibra === 1 ? '50 x 125µm - MM' : '9 x 125µm - SM';
+    const especificacao = caracteristicaFibra < 3 ? '50 x 125µm - MM' : '9 x 125µm - SM';
 
     const paresPorAndar = paresPorCabo * quantidadeBackbone;
     const paresTotal = paresPorAndar * (pavimentos - 1);
@@ -140,10 +155,10 @@ function calcularBackboneSecundario()
 
     tamanhoCabo = Math.ceil(tamanhoCabo * 1.2);
 
-    atualizarEquipamentos('cabo secundario', `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra === 1 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${paresPorCabo} fibras`, 'metros', tamanhoCabo);
+    atualizarEquipamentos('cabo-secundario', `Cabo de Fibra Óptica Tight Buffer ${caracteristicaFibra < 3 ? '(FOMMIG) 50 x 125µm' : '(FOSMIG) 9 x 125µm'} - com ${paresPorCabo} fibras`, 'metros', tamanhoCabo);
 
     //DIO
-    const quantidadeDio = Math.ceil((paresTotal) / 24);
+    const quantidadeDio = Math.ceil((paresTotal / 2) / 24);
 
     atualizarEquipamentos('dio', 'Chassi DIO (Distribuido Interno Óptico) com 24 portas - 1U - 19"', 'unid', quantidadeDio);
 

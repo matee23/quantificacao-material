@@ -20,44 +20,54 @@
         <main>
             <section class="py-5">
                 <form class="container row g-3 needs-validation" id="form">
-                    <div class="conatine row g-3" id="container-backbone-primario">
-                        <h1>Backbone primário</h1>
-                        <div class="col-md-4">
-                            <label for="distancia">Distância entre as salas (em metros)</label>
-                            <input type="number" class="form-control" id="distancia" name="distancia" value="1000" required>
+                    <div class="col-md-4">
+                        <p>Possui backbone primário?</p>
+                        <div>
+                            <input type="radio" id="possui-primario-sim" name="possui-primario" value="1">
+                            <label for="possui-primario-sim">Sim</label>
                         </div>
-                        <div class="col-md-4">
+                        <div>
+                            <input type="radio" id="possui-primario-nao" name="possui-primario" value="0" checked>
+                            <label for="possui-primario-nao">Não</label>
+                        </div>
+                    </div>
+                    <div class="conatine row g-3 hidden" id="container-backbone-primario">
+                        <h1>Backbone primário</h1>
+                        <div class="col-md-6">
                             <label for="caracteristicas-primario">Características da fibra óptica</label>
                             <select class="form-select" id="caracteristicas-primario" name="caracteristicas-primario">
-                                <option value="1" selected>Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1310nm</option>
-                                <option value="2">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1550nm</option>
+                                <option value="1">Fibra Óptica Multimodo (FOMMIG) 50 x 125µm 850nm</option>
+                                <option value="2">Fibra Óptica Multimodo (FOMMIG) 50 x 125µm 1310nm</option>
+                                <option value="3" selected>Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1310nm</option>
+                                <option value="4">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1550nm</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="backbone-primario">Quantidade de Backbone</label>
                             <input type="number" class="form-control" id="backbone-primario" name="backbone-primario"
                                 value="1" required>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="disponivel-primario">Número de pares de fibra disponíveis</label>
                             <input type="number" class="form-control" id="disponivel-primario"
                                 name="disponivel-primario" value="4" required>
                         </div>
+                        <div class="col-md-6">
+                            <label for="distancia">Distância entre as SEQs (em metros)</label>
+                            <input type="number" class="form-control" id="distancia" name="distancia" value="1000"
+                                required>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        
-                        <div class="form-check form-switch">
-                            <label for="possui-secundario">Possui backbone secundário?</label>
-                            <input type="checkbox" class="form-check-input" id="possui-secundario">
-                        </div>
-                        <!--<div>
+                        <p>Possui backbone secundário?</p>
+                        <div>
                             <input type="radio" id="possui-secundario-sim" name="possui-secundario" value="1">
                             <label for="possui-secundario-sim">Sim</label>
                         </div>
                         <div>
                             <input type="radio" id="possui-secundario-nao" name="possui-secundario" value="0" checked>
                             <label for="possui-secundario-nao">Não</label>
-                        </div>-->
+                        </div>
                     </div>
                     <div class="container row g-3 hidden" id="container-backbone-secundario">
                         <h1>Backbone secundário</h1>
@@ -76,8 +86,10 @@
                                 óptica</label>
                             <select class="form-select" id="caracteristicas-secundario"
                                 name="caracteristicas-secundario">
-                                <option value="1" selected>Fibra Óptica Multimodo (FOMMIG) 50 x 125µm</option>
-                                <option value="2">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm</option>
+                                <option value="1">Fibra Óptica Multimodo (FOMMIG) 50 x 125µm 850nm</option>
+                                <option value="2" selected>Fibra Óptica Multimodo (FOMMIG) 50 x 125µm 1310nm</option>
+                                <option value="3">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1310nm</option>
+                                <option value="4">Fibra Óptica Monomodo (FOSMIG) 9 x 125µm 1550nm</option>
                             </select>
                         </div>
                         <div class="col-md-4">
